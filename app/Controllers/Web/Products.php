@@ -9,5 +9,6 @@ class Products extends ResourcePresenter
     public function index()
     {
         //
+        return view('project/pages/products');
     }
 }

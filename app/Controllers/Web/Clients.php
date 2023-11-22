@@ -9,5 +9,6 @@ class Clients extends ResourcePresenter
     public function index()
     {
         //
+        return view('project/pages/clients');
     }
 }

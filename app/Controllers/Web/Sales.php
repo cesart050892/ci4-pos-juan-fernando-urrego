@@ -9,5 +9,6 @@ class Sales extends ResourcePresenter
     public function index()
     {
         //
+        return view('project/pages/sales');
     }
 }

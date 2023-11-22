@@ -9,5 +9,6 @@ class Dashboard extends ResourcePresenter
     public function index()
     {
         //
+        return view('project/pages/dashboard');
     }
 }

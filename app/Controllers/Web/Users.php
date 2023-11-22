@@ -9,5 +9,6 @@ class Users extends ResourcePresenter
     public function index()
     {
         //
+        return view('project/pages/users');
     }
 }

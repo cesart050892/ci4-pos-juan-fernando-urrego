@@ -9,5 +9,6 @@ class Categories extends ResourcePresenter
     public function index()
     {
         //
+        return view('project/pages/categories');
     }
 }

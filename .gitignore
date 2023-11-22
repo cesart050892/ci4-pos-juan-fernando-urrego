@@ -1,0 +1,35 @@
+# Carpeta de dependencias de Composer
+/vendor/
+
+# Carpeta de dependencias de Node.js
+/node_modules/
+
+# Archivos de configuración sensibles
+.env
+
+# Archivos generados por el servidor web
+/public/assets/*
+
+# Archivos de respaldo y temporales
+*.log
+*.sql
+*.sqlite
+*.sqlite3
+
+# Carpeta de logs y caché de CI4
+/writable/cache/*
+/writable/logs/*
+
+# Archivos de sesiones de CI4 (si se almacenan en el sistema de archivos)
+writable/sessions/*
+
+# Directorio de la barra de depuración de CI4
+writable/debugbar/*
+
+# Archivos de configuración locales (no deben ser compartidos)
+/app/Config/Development/
+/app/Config/Production/
+
+# Otros archivos generados o sensibles
+.idea/
+.vscode/

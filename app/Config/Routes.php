@@ -34,7 +34,7 @@ $routes->get('dashboard', 'Dashboard::index');
 $routes->get('users', 'Users::index');
 $routes->get('categories', 'Categories::index');
 $routes->get('products', 'Products::index');
-$routes->get('clientes', 'Clients::index');
+$routes->get('clients', 'Clients::index');
 $routes->get('sales', 'Sales::index');
 $routes->get('create-sale', 'Sale::new');
 

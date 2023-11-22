@@ -1,0 +1,3 @@
+$(function () {
+    $("#usuarios").DataTable({});
+});

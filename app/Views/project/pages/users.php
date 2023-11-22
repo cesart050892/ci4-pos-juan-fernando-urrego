@@ -24,7 +24,7 @@
                 </div>
             </div>
             <div class="box-body">
-                <table id="usuarios" class="table table-bordered table-striped" style="width: 100%">
+                <table id="usuarios" class="table table-bordered table-striped dt-responsive" style="width: 100%">
                     <thead>
                         <tr>
                             <th>Nombre</th>
@@ -155,5 +155,8 @@
     </div>
     <!-- ./dialog -->
 </div>
+<?= $this->endSection() ?>
 
+<?= $this->section('scripts') ?>
+<script src="<?= base_url("/app/js/users.js") ?>"></script>
 <?= $this->endSection() ?>

@@ -12,7 +12,7 @@ class Auth extends ResourceController
 
     public function __construct()
     {
-        helper('logger');
+        helper(['logger', 'cookie']);
         $this->manager = new ManagersAuth();
     }
 
@@ -49,5 +49,26 @@ class Auth extends ResourceController
         return $this->respond([
             'status' => 200
         ]);
+    }
+
+    public function logout()
+    {
+        // Aquí, podrías invalidar el token, por ejemplo, agregándolo a una lista negra
+        // o estableciendo su fecha de expiración a un tiempo pasado.
+
+        // Si estás usando JWT, no puedes "eliminar" un token una vez que se ha emitido.
+        // Pero puedes agregarlo a una lista negra o asegurarte de que no se acepte en futuras solicitudes.
+
+        // Suponiendo que tienes un método para manejar esto:
+        $token = $this->request->header('Authorization');
+        $this->invalidateToken($token);
+        return $this->respond(['message' => 'Logged out successfully'], 200);
+    }
+
+    private function invalidateToken($token)
+    {
+        $cname = env('remember.cname') || 'ci_remember';
+        delete_cookie($cname);
+        session()->destroy();
     }
 }

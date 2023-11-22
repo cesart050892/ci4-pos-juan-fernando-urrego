@@ -42,8 +42,9 @@ $routes->group('', ['filter' => 'auth'], function ($routes) {
 });
 
 $routes->group('api', function ($routes) {
-    $routes->group('auth', ['namespace' => 'App\Controllers\Api', 'filter' => 'no-auth'], function ($routes) {
-        $routes->post("login", 'Auth::index');
+    $routes->group('auth', ['namespace' => 'App\Controllers\Api'], function ($routes) {
+        $routes->post("login", 'Auth::index', ['filter' => 'no-auth']);
+        $routes->get("logout", 'Auth::logout', ['filter' => 'auth']);
     });
 });
 

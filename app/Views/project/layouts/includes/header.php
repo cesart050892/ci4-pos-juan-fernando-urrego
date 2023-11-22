@@ -40,7 +40,7 @@
                         <!-- Menu Body -->
                         <li class="user-body">
                             <div class="pull-right">
-                                <a href="salir" class="btn btn-default btn-flat">Salir</a>
+                                <button id="btn-logout" class="btn btn-default btn-flat">Salir</button>
                             </div>
                         </li>
                         <!-- Menu Footer-->

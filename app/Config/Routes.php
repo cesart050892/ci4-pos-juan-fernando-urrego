@@ -29,14 +29,19 @@ $routes->set404Override('App\Controllers\Web\Errors::index');
 
 // We get a performance increase by specifying the default
 // route since we don't have to scan directories.
+$routes->get('/', 'Auth::index', ['filter' => 'no-auth']);
 
-$routes->get('dashboard', 'Dashboard::index');
-$routes->get('users', 'Users::index');
-$routes->get('categories', 'Categories::index');
-$routes->get('products', 'Products::index');
-$routes->get('clients', 'Clients::index');
-$routes->get('sales', 'Sales::index');
-$routes->get('create-sale', 'Sale::new');
+$routes->group('', ['filter' => 'auth'], function ($routes) {
+    $routes->get('dashboard', 'Dashboard::index');
+    $routes->get('users', 'Users::index');
+    $routes->get('categories', 'Categories::index');
+    $routes->get('products', 'Products::index');
+    $routes->get('clients', 'Clients::index');
+    $routes->get('sales', 'Sales::index');
+    $routes->get('create-sale', 'Sale::new');
+});
+
+
 
 /*
  * --------------------------------------------------------------------

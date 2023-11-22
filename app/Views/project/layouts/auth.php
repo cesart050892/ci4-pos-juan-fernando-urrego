@@ -48,6 +48,8 @@
             });
         });
     </script>
+    <!-- Login Page Script -->
+    <?= $this->renderSection('scripts') ?>
 </body>
 
 </html>

@@ -41,6 +41,12 @@ $routes->group('', ['filter' => 'auth'], function ($routes) {
     $routes->get('create-sale', 'Sale::new');
 });
 
+$routes->group('api', function ($routes) {
+    $routes->group('auth', ['namespace' => 'App\Controllers\Api', 'filter' => 'no-auth'], function ($routes) {
+        $routes->post("login", 'Auth::index');
+    });
+});
+
 
 
 /*

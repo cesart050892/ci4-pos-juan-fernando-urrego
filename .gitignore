@@ -21,7 +21,7 @@
 /writable/logs/*
 
 # Archivos de sesiones de CI4 (si se almacenan en el sistema de archivos)
-writable/sessions/*
+writable/session/*
 
 # Directorio de la barra de depuración de CI4
 writable/debugbar/*

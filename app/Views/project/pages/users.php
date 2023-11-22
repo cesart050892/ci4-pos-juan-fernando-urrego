@@ -19,7 +19,7 @@
     <section class="content">
         <div class="box">
             <div class="box-header with-border">
-                <div class="btn btn-primary" data-toggle="modal" data-target="modalUsuario">
+                <div class="btn btn-primary" data-toggle="modal" data-target="#modalAgregarUsuario">
                     Agregar Usuario
                 </div>
             </div>
@@ -88,4 +88,72 @@
     </section>
     <!-- /.content -->
 </div>
+<!-- =================================== -->
+
+<div id="modalAgregarUsuario" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <form id="form-new" action="" autocomplete="off">
+            <div class="modal-content">
+                <div class="modal-header" style="background: #3c8dbc; color:white;">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Agregar Usuario</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="box-body">
+                        <div class="form-group">
+                            <div class="input-group">
+                                <span class="input-group-addon">
+                                    <i class="fa fa-user"></i>
+                                </span>
+                                <input type="text" class="form-control input-lg" name="nombre" placeholder="Ingresar nombre" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="input-group">
+                                <span class="input-group-addon">
+                                    <i class="fa fa-key"></i>
+                                </span>
+                                <input type="text" class="form-control input-lg" name="usuario" placeholder="Ingresar usuario" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="input-group">
+                                <span class="input-group-addon">
+                                    <i class="fa fa-lock"></i>
+                                </span>
+                                <input type="password" class="form-control input-lg" name="password" placeholder="Ingresar contraseña" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="input-group">
+                                <span class="input-group-addon"><i class="fa fa-users"></i></span>
+                                <select class="form-control input-lg" name="perfil">
+                                    <option value="">Selecionar perfil</option>
+                                    <option value="Administrador">Administrador</option>
+                                    <option value="Especial">Especial</option>
+                                    <option value="Vendedor">Vendedor</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="panel">SUBIR FOTO</div>
+                            <input type="file" class="user-photo" name="foto">
+                            <p class="help-block">Peso máximo de la foto 2MB</p>
+                            <img src="<?= base_url("app/img/template/user/anonymous.png") ?>" class="img-thumbnail previsualizar" width="100px">
+                        </div>
+                    </div>
+                </div>
+                <!-- ./body -->
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Salir</button>
+                    <button type="submit" class="btn btn-primary">Guardar</button>
+                </div>
+                <!-- ./footer -->
+            </div>
+            <!-- ./content -->
+        </form>
+    </div>
+    <!-- ./dialog -->
+</div>
+
 <?= $this->endSection() ?>

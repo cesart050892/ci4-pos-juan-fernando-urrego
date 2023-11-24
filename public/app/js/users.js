@@ -114,13 +114,18 @@ $(function () {
         event.preventDefault();
 
         // Obtener los datos del formulario
-        const formData = $(this).serialize();
+        // const formData = $(this).serialize();
+
+        // Obtener los datos del formulario, incluyendo archivos
+        const formData = new FormData(this);
 
         // Realizar la solicitud POST usando jQuery
         $.ajax({
             type: "POST",
             url: base_url + "api/users", // Reemplaza con tu endpoint correcto
             data: formData,
+            contentType: false, // Importante: desactivar la configuración predeterminada de contentType (para archivos)
+            processData: false, // Importante: desactivar la configuración predeterminada de processData (para archivos)
             success: function (response) {
                 swal({
                     type: "success",
@@ -129,24 +134,42 @@ $(function () {
                 }).then((r) => {
                     if (r.value) {
                         table.ajax.reload();
+                        $("#modalAgregarUsuario").modal("hide"); // Cerrar el modal
+                        $("#form-new")[0].reset(); // Limpiar el formulario
+                        $(".previsualizar").attr(
+                            "src",
+                            "../app/img/template/user/anonymous.png"
+                        );
                     }
                 });
                 console.log("Solicitud POST exitosa:", response);
                 // Manejar la respuesta si es necesario
             },
-            error: function (error) {
+            error: function (xhr, status, error) {
+                let response = xhr.responseJSON || {};
+
+                let mensajesError = "<ul>";
+                if (response.messages && response.messages.errors) {
+                    Object.values(response.messages.errors).forEach(
+                        (errorMessage) => {
+                            mensajesError += `<li>${errorMessage}</li>`;
+                        }
+                    );
+                }
+                mensajesError += "</ul>";
+
+                let errorMessage = `<br><br>`;
+                errorMessage += "Errores:<br>" + mensajesError;
+
                 swal({
                     type: "error",
-                    title: "Hubo un error!",
-                    showConfirButton: true,
-                    confirmButtonText: "Cerrar",
-                }).then((r) => {
-                    if (r.value) {
+                    title: "¡Hubo un error en la solicitud!",
+                    html: errorMessage,
+                }).then((result) => {
+                    if (result.isConfirmed) {
                         location.reload();
                     }
                 });
-                console.error("Error en la solicitud POST:", error);
-                // Manejar errores si es necesario
             },
         });
     });

@@ -40,6 +40,7 @@
     <!-- iCheck -->
     <script src="<?= base_url("/adminlte/plugins/iCheck/icheck.min.js") ?>"></script>
     <script>
+        const base_url = "<?= base_url() ?>"
         $(function() {
             $('input').iCheck({
                 checkboxClass: 'icheckbox_square-blue',

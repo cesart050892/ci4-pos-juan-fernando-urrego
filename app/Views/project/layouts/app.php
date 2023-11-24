@@ -307,6 +307,9 @@
     <script src="<?= base_url("/adminlte/dist/js/adminlte.min.js") ?>"></script>
     <!-- AdminLTE for demo purposes -->
     <script src="<?= base_url("/adminlte/dist/js/demo.js") ?>"></script>
+    <script>
+        const base_url = "<?= base_url() ?>"
+    </script>
     <!-- App script -->
     <script src="<?= base_url("/app/js/app.js") ?>"></script>
     <!-- page script -->

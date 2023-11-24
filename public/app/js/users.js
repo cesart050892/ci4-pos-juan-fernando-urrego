@@ -1,5 +1,11 @@
+let table;
+let isEditing = false;
+
 $(function () {
-    const table = $("#usuarios").DataTable({
+    /**
+     * RENDER
+     */
+    table = $("#usuarios").DataTable({
         language: {
             url: base_url + "/app/es-ES.json",
         },
@@ -110,14 +116,92 @@ $(function () {
         reader.readAsDataURL(file);
     });
 
-    $("#form-new").submit(function (event) {
-        event.preventDefault();
+    function renderModal(
+        title,
+        headerBgColor,
+        headerTextColor,
+        buttonText,
+        buttonClass
+    ) {
+        $(".modal-title").text(title);
+        $(".modal-header").css({
+            background: headerBgColor,
+            color: headerTextColor,
+        });
+        $('button[type="submit"]')
+            .removeClass("btn-primary btn-warning")
+            .addClass(buttonClass)
+            .text(buttonText);
+    }
 
+    function renderUserData(userData) {
+        $('input[name="nombre"]').val(userData.nombre);
+        $('input[name="usuario"]').val(userData.usuario);
+        $('select[name="perfil"]').val(userData.perfil);
+        $(".previsualizar").attr("src", "uploads/" + userData.foto);
+    }
+
+    function resetUserData() {
+        $("#form-new")[0].reset();
+        $(".previsualizar").attr(
+            "src",
+            "../app/img/template/user/anonymous.png"
+        );
+    }
+
+    function resetModal() {
+        isEditing = false;
+        console.log("Editing >>:", isEditing);
+        resetUserData();
+        renderModal(
+            "Agregar Usuario",
+            "#3c8dbc",
+            "white",
+            "Guardar",
+            "btn-primary"
+        );
+    }
+
+    $("#modalAgregarUsuario").on("hidden.bs.modal", function () {
+        resetModal();
+    });
+
+    /**
+     * CRUD
+     */
+
+    function show(itemId) {
+        $.ajax({
+            type: "GET",
+            url: base_url + "api/users/" + itemId,
+            success: function (response) {
+                isEditing = true;
+                localStorage.setItem("user", JSON.stringify(response.data));
+                renderUserData(response.data);
+                renderModal(
+                    "Editar Usuario",
+                    "#ec971f",
+                    "white",
+                    "Editar",
+                    "btn-warning"
+                );
+                $("#modalAgregarUsuario").modal("show");
+                console.log("Editing >>:", isEditing);
+            },
+            error: function (error) {
+                // Manejar errores al obtener un usuario específico
+                // ...
+            },
+        });
+    }
+
+    function saveUser() {
         // Obtener los datos del formulario
         // const formData = $(this).serialize();
 
         // Obtener los datos del formulario, incluyendo archivos
-        const formData = new FormData(this);
+
+        const formData = new FormData($("#form-new")[0]);
 
         // Realizar la solicitud POST usando jQuery
         $.ajax({
@@ -134,12 +218,7 @@ $(function () {
                 }).then((r) => {
                     if (r.value) {
                         table.ajax.reload();
-                        $("#modalAgregarUsuario").modal("hide"); // Cerrar el modal
-                        $("#form-new")[0].reset(); // Limpiar el formulario
-                        $(".previsualizar").attr(
-                            "src",
-                            "../app/img/template/user/anonymous.png"
-                        );
+                        resetModal();
                     }
                 });
                 console.log("Solicitud POST exitosa:", response);
@@ -166,11 +245,141 @@ $(function () {
                     title: "¡Hubo un error en la solicitud!",
                     html: errorMessage,
                 }).then((result) => {
-                    if (result.isConfirmed) {
+                    if (result.value) {
                         location.reload();
                     }
                 });
             },
+        });
+    }
+
+    function updateUser() {
+        // Obtener los datos del formulario
+        // const formData = $(this).serialize();
+
+        // Obtener los datos del formulario, incluyendo archivos
+        const formData = new FormData($("#form-new")[0]);
+
+        // Realizar la solicitud POST usando jQuery
+        $.ajax({
+            type: "PUT",
+            url: base_url + "api/users", // Reemplaza con tu endpoint correcto
+            data: formData,
+            contentType: false, // Importante: desactivar la configuración predeterminada de contentType (para archivos)
+            processData: false, // Importante: desactivar la configuración predeterminada de processData (para archivos)
+            success: function (response) {
+                swal({
+                    type: "success",
+                    title: "El usuario ha sido actualizado exitosamente!",
+                    showConfirButton: false,
+                }).then((r) => {
+                    if (r.value) {
+                        table.ajax.reload();
+                        resetModal();
+                    }
+                });
+                console.log("Solicitud PUT exitosa:", response);
+                // Manejar la respuesta si es necesario
+            },
+            error: function (xhr, status, error) {
+                let response = xhr.responseJSON || {};
+
+                let mensajesError = "<ul>";
+                if (response.messages && response.messages.errors) {
+                    Object.values(response.messages.errors).forEach(
+                        (errorMessage) => {
+                            mensajesError += `<li>${errorMessage}</li>`;
+                        }
+                    );
+                }
+                mensajesError += "</ul>";
+
+                let errorMessage = `<br><br>`;
+                errorMessage += "Errores:<br>" + mensajesError;
+
+                swal({
+                    type: "error",
+                    title: "¡Hubo un error en la solicitud!",
+                    html: errorMessage,
+                }).then((result) => {
+                    if (result.value) {
+                        location.reload();
+                    }
+                });
+            },
+        });
+    }
+
+    function deleteUser(itemId) {
+        $.ajax({
+            url: base_url + "api/users/" + itemId,
+            type: "DELETE",
+            success: function (response, status, xhr) {
+                // Manejar la respuesta exitosa
+                if (xhr.status === 200) {
+                    // Mostrar una alerta SweetAlert2 indicando que el usuario ha sido eliminado
+                    swal({
+                        title: "Usuario Eliminado",
+                        text: "El usuario ha sido eliminado satisfactoriamente",
+                        type: "success",
+                        confirmButtonText: "Aceptar",
+                    });
+                    table.ajax.reload();
+                } else {
+                    // Manejar la respuesta en caso de éxito, pero con un mensaje de error o respuesta inesperada
+                    swal({
+                        title: "Error",
+                        text: "Ha ocurrido un error al eliminar el usuario",
+                        type: "error",
+                        confirmButtonText: "Aceptar",
+                    });
+                    table.ajax.reload();
+                }
+            },
+            error: function (xhr, status, error) {
+                // Manejar los errores de la petición
+                console.error(error);
+
+                // Mostrar una alerta SweetAlert2 indicando que ha habido un error en la solicitud
+                swal({
+                    title: "Error",
+                    text: "Ha ocurrido un error en la solicitud",
+                    icon: "error",
+                    confirmButtonText: "Aceptar",
+                });
+                table.ajax.reload();
+            },
+        });
+    }
+
+    /**
+     * EVENTS
+     */
+
+    $("#form-new").submit(function (event) {
+        event.preventDefault();
+
+        if (isEditing) {
+            updateUser();
+        } else {
+            saveUser();
+        }
+    });
+
+    $("#usuarios tbody").on("click", "button.edit-btn", function () {
+        var itemId = $(this).data("item");
+        swal({
+            title: "Editar elemento",
+            text: "¿Estás seguro de editar el elemento con ID " + itemId + "?",
+            type: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#ec971f",
+            cancelButtonColor: "#3085d6",
+            confirmButtonText: "Sí, editar",
+        }).then((result) => {
+            if (result.value) {
+                show(itemId);
+            }
         });
     });
 
@@ -193,46 +402,7 @@ $(function () {
                 // Por ejemplo, realizar una solicitud AJAX al endpoint correspondiente para eliminar el elemento
                 // Una vez eliminado, puedes recargar la tabla DataTables si es necesario
                 // Ejemplo: table.ajax.reload();
-
-                $.ajax({
-                    url: base_url + "api/users/" + itemId,
-                    type: "DELETE",
-                    success: function (response, status, xhr) {
-                        // Manejar la respuesta exitosa
-                        if (xhr.status === 200) {
-                            // Mostrar una alerta SweetAlert2 indicando que el usuario ha sido eliminado
-                            swal({
-                                title: "Usuario Eliminado",
-                                text: "El usuario ha sido eliminado satisfactoriamente",
-                                type: "success",
-                                confirmButtonText: "Aceptar",
-                            });
-                            table.ajax.reload();
-                        } else {
-                            // Manejar la respuesta en caso de éxito, pero con un mensaje de error o respuesta inesperada
-                            swal({
-                                title: "Error",
-                                text: "Ha ocurrido un error al eliminar el usuario",
-                                type: "error",
-                                confirmButtonText: "Aceptar",
-                            });
-                            table.ajax.reload();
-                        }
-                    },
-                    error: function (xhr, status, error) {
-                        // Manejar los errores de la petición
-                        console.error(error);
-
-                        // Mostrar una alerta SweetAlert2 indicando que ha habido un error en la solicitud
-                        swal({
-                            title: "Error",
-                            text: "Ha ocurrido un error en la solicitud",
-                            icon: "error",
-                            confirmButtonText: "Aceptar",
-                        });
-                        table.ajax.reload();
-                    },
-                });
+                deleteUser(itemId);
             }
         });
     });

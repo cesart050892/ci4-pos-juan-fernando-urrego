@@ -68,71 +68,78 @@ class Users extends ResourceController
     {
         // Reglas de validación para el nombre del cliente
         $validationRules = [
-                'usuario' => [
-                    'label' => 'nombre de usuario',
-                    'rules' => 'required|is_unique[users.usuario]',
-                    'errors' => [
-                        'required' => 'El campo {field} es obligatorio.',
-                        'is_unique' => 'El {field} ya existe en la base de datos.'
-                    ]
-                ],
-                'perfil' => [
-                    'label' => 'perfil de usuario',
-                    'rules' => 'required',
-                    'errors' => [
-                        'required' => 'El campo {field} es obligatorio.',
-                    ]
+            'usuario' => [
+                'label' => 'nombre de usuario',
+                'rules' => 'required|is_unique[users.usuario]',
+                'errors' => [
+                    'required' => 'El campo {field} es obligatorio.',
+                    'is_unique' => 'El {field} ya existe en la base de datos.'
                 ]
+            ],
+            'perfil' => [
+                'label' => 'perfil de usuario',
+                'rules' => 'required',
+                'errors' => [
+                    'required' => 'El campo {field} es obligatorio.',
+                ]
+            ]
         ];
-    
+
         // Validar los datos del formulario
         if (!$this->validate($validationRules)) {
             return $this->fail(['errors' => $this->validator->getErrors()]);
         }
-    
+
         // Crear una nueva entidad de cliente
         $entity = new \App\Entities\Users();
         $entity->fill($this->request->getPost());
-    
+
         // Guardar los datos del cliente
         if (!$this->model->save($entity)) {
             return $this->failValidationErrors($this->model->validator->getErrors());
         }
-    
+
         // Obtener el ID del cliente recién insertado
         $lastInsertedId = $this->model->db->insertID();
-    
+
         // Obtener los datos del cliente recién insertado
         $data = $this->model->where('id', $lastInsertedId)->first();
-    
+
         // Obtener el archivo de foto cargado por el usuario
         $photo = $this->request->getFile('foto');
-    
+
         // Verificar si se ha cargado una nueva foto
         if ($photo->isValid() && !$photo->hasMoved()) {
             // Obtener la ruta de la foto actual del cliente (suponiendo que se almacena en la base de datos)
             $currentPhotoPath = $this->model->getCurrentPhotoPath($lastInsertedId); // Reemplaza con la lógica real para obtener la ruta
-    
+
             // Verificar si el cliente tiene una foto actual en el servidor
             $directoryPath = ROOTPATH . 'public/uploads/';
             $filePath = $directoryPath . $currentPhotoPath;
-    
+
             if (!empty($currentPhotoPath) && file_exists($filePath)) {
                 // Eliminar la foto actual del servidor
                 unlink($filePath);
             }
-    
+
             // Generar un nombre único para la nueva foto (puedes usar tu lógica para nombrar la foto)
             $newPhotoName = $photo->getRandomName();
-    
+
             // Mover la nueva foto al directorio de subida
             $photo->move($directoryPath, $newPhotoName);
-    
+
+            $newFilePath = $directoryPath . $newPhotoName;
+            // Cargar la imagen utilizando la librería de manipulación de imágenes
+            $image = \Config\Services::image()
+                ->withFile($newFilePath)
+                ->fit(800, 800, 'center') // Redimensionar y recortar a 800x800
+                ->save($newFilePath); // Sobrescribir la imagen original con el nuevo tamaño
+
             // Actualizar la ruta de la foto en la base de datos para el cliente (suponiendo que tengas un modelo para actualizar)
             // Reemplaza con la lógica real para actualizar la ruta de la foto
             $this->model->updatePhotoPath($lastInsertedId, $newPhotoName); // Utiliza tu lógica real para actualizar la ruta
         }
-    
+
         // Responder con los datos del cliente creado
         return $this->respondCreated([
             'message' => 'created',
@@ -207,21 +214,21 @@ class Users extends ResourceController
             if (!$data = $this->model->find($id)) {
                 return $this->fail('El usuario no existe.'); // Mensaje si el usuario no se encuentra
             }
-    
+
             // Obtener la ruta de la foto actual del usuario (suponiendo que se almacena en la base de datos)
             $currentPhotoPath = $this->model->getCurrentPhotoPath($id); // Reemplaza con la lógica real para obtener la ruta
-    
+
             // Verificar si el usuario tiene una foto actual en el servidor y eliminarla si existe
             $directoryPath = ROOTPATH . 'public/uploads/';
             $filePath = $directoryPath . $currentPhotoPath;
-    
+
             if (!empty($currentPhotoPath) && file_exists($filePath)) {
                 unlink($filePath); // Eliminar la foto actual del servidor
             }
-    
+
             // Eliminar al usuario
             $this->model->delete($id);
-    
+
             // Responder con un mensaje de éxito
             return $this->respondDeleted([
                 'message' => 'usuario eliminado correctamente.',

@@ -202,21 +202,34 @@ class Users extends ResourceController
      */
     public function delete($id = null)
     {
-        //
         try {
-            // Find
-            if (!$data = $this->model->find($id))
-                return $this->fail('doesn\'t exist!');
-            // Delete
+            // Buscar el usuario por su ID
+            if (!$data = $this->model->find($id)) {
+                return $this->fail('El usuario no existe.'); // Mensaje si el usuario no se encuentra
+            }
+    
+            // Obtener la ruta de la foto actual del usuario (suponiendo que se almacena en la base de datos)
+            $currentPhotoPath = $this->model->getCurrentPhotoPath($id); // Reemplaza con la lógica real para obtener la ruta
+    
+            // Verificar si el usuario tiene una foto actual en el servidor y eliminarla si existe
+            $directoryPath = ROOTPATH . 'public/uploads/';
+            $filePath = $directoryPath . $currentPhotoPath;
+    
+            if (!empty($currentPhotoPath) && file_exists($filePath)) {
+                unlink($filePath); // Eliminar la foto actual del servidor
+            }
+    
+            // Eliminar al usuario
             $this->model->delete($id);
-            // Response
+    
+            // Responder con un mensaje de éxito
             return $this->respondDeleted([
-                'message' => 'deleted',
-                'data' => $data
+                'message' => 'usuario eliminado correctamente.',
+                'data' => $data // Puedes devolver los datos del usuario eliminado si es necesario
             ]);
         } catch (\Exception $e) {
-            // Error Handling
-            return $this->failServerError('Internal Server Error', $e->getMessage());
+            // Manejar errores del servidor
+            return $this->failServerError('Error interno del servidor', $e->getMessage());
         }
     }
 }

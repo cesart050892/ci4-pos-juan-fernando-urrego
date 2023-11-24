@@ -40,4 +40,34 @@ class Users extends Model
     protected $afterFind      = [];
     protected $beforeDelete   = [];
     protected $afterDelete    = [];
+
+    
+    // Functions
+
+    // Método para obtener la ruta actual de la foto del usuario
+    public function getCurrentPhotoPath($userId)
+    {
+        $user = $this->select('users.foto')
+            ->where('id', $userId)
+            ->get()
+            ->getRow();
+
+        if ($user) {
+            return $user->foto;
+        }
+
+        return null; // Si el usuario no existe o no tiene una foto
+    }
+
+    public function updatePhotoPath($userId, $photoName)
+    {
+        $data = [
+            'foto' => $photoName
+        ];
+
+        $this->set($data)
+            ->where('id', $userId)
+            ->update();
+    }
+
 }

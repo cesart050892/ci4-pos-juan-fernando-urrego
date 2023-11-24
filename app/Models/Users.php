@@ -41,7 +41,7 @@ class Users extends Model
     protected $beforeDelete   = [];
     protected $afterDelete    = [];
 
-    
+
     // Functions
 
     // Método para obtener la ruta actual de la foto del usuario
@@ -70,4 +70,14 @@ class Users extends Model
             ->update();
     }
 
+    public function logLastLogin($userId)
+    {
+        $data = [
+            'ultimo_login' => date('Y-m-d H:i:s')
+        ];
+
+        $this->set($data)
+            ->where('id', $userId)
+            ->update();
+    }
 }

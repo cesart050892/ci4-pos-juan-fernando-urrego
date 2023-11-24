@@ -73,6 +73,8 @@ class Auth
             'perfil' => $this->user->perfil,
             'foto' => $this->user->foto
         ]);
+
+        $this->model->logLastLogin($this->user->id);
     }
 
     public function auth(array $request)

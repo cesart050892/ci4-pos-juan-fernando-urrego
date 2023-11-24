@@ -1,6 +1,6 @@
 <header class="main-header">
     <!-- Logo -->
-    <a href="/adminlte/index2.html" class="logo">
+    <a href="<?= base_url("/") ?>" class="logo">
         <!-- mini logo for sidebar mini 50x50 pixels -->
         <span class="logo-mini">
             <img src="<?= base_url("app/img/template/icono-blanco.png") ?>" alt="logo_mini" class="img-responsive" style="padding: 10px;">
@@ -26,12 +26,12 @@
                         <?php
                         if (!empty(session("foto"))) {
 
-                            echo '<img src="' . session("foto") . '" class="user-image">';
+                            echo '<img src="uploads/' . session("foto") . '" class="user-image">';
                         } else {
                             echo '<img src="' . base_url("app/img/template/user/anonymous.png") . '" class="user-image">';
                         }
                         ?>
-                        <span class="hidden-xs"><?php echo session("nombre"); ?></span>
+                        <span class="hidden-xs"><?= session("nombre"); ?></span>
                     </a>
                     <ul class="dropdown-menu">
                         <!-- User image -->

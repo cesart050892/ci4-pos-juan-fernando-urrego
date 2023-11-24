@@ -5,10 +5,17 @@
         <!-- Sidebar user panel -->
         <div class="user-panel">
             <div class="pull-left image">
-                <img src="/adminlte/dist/img/user2-160x160.jpg" class="img-circle" alt="User Image">
+            <?php
+                if (!empty(session("foto"))) {
+
+                    echo '<img src="uploads/' . session("foto") . '" class="img-circle" alt="User Image">';
+                } else {
+                    echo '<img src="' . base_url("app/img/template/user/anonymous.png") . '" class="img-circle" alt="User Image">';
+                }
+            ?>
             </div>
             <div class="pull-left info">
-                <p>Alexander Pierce</p>
+                <p><?= session("nombre"); ?></p>
                 <a href="#"><i class="fa fa-circle text-success"></i> Online</a>
             </div>
         </div>

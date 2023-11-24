@@ -33,7 +33,7 @@ $routes->get('/', 'Auth::index', ['filter' => 'no-auth']);
 
 $routes->group('', ['filter' => 'auth'], function ($routes) {
     $routes->get('dashboard', 'Dashboard::index');
-    $routes->get('users', 'Users::index');
+    $routes->get('users', 'Users::index', ['filter'=> 'access:Administrador,Especial']);
     $routes->get('categories', 'Categories::index');
     $routes->get('products', 'Products::index');
     $routes->get('clients', 'Clients::index');

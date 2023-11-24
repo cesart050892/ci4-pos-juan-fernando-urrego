@@ -2,6 +2,7 @@
 
 namespace Config;
 
+use App\Filters\Access;
 use App\Filters\AuthFilter;
 use App\Filters\NoAuthFilter;
 use CodeIgniter\Config\BaseConfig;
@@ -24,7 +25,8 @@ class Filters extends BaseConfig
         'invalidchars'  => InvalidChars::class,
         'secureheaders' => SecureHeaders::class,
         'auth'          => AuthFilter::class,
-        'no-auth'       => NoAuthFilter::class
+        'no-auth'       => NoAuthFilter::class,
+        'access'        => Access::class
     ];
 
     /**

@@ -20,7 +20,7 @@ $(function () {
                     // Verifica si hay una URL de imagen disponible en los datos
                     if (data.foto !== "") {
                         return (
-                            '<img src="../app/img/template/user/' +
+                            '<img src="uploads/' +
                             data.foto +
                             '" alt="" class="img-thumbnail" width="40px">'
                         );
@@ -65,6 +65,49 @@ $(function () {
             },
             // ... otras columnas según la estructura de tu respuesta JSON
         ],
+    });
+
+    $(".user-photo").change(function (e) {
+        e.preventDefault();
+        let file = this.files[0];
+
+        // Validación del formato de la imagen
+        if (!file.type.match("image/jpeg") && !file.type.match("image/png")) {
+            // Si el formato no es JPG o PNG, mostrar un SweetAlert2 informando sobre los formatos permitidos
+            swal({
+                title: "Formato inválido",
+                text: "Los formatos permitidos son JPG y PNG",
+                type: "error",
+                confirmButtonText: "Aceptar",
+            });
+            // Limpiar el campo de carga de la imagen (opcional)
+            $(this).val("");
+            return;
+        }
+
+        // Validación del tamaño de la imagen (2 MB)
+        if (file.size > 2 * 1024 * 1024) {
+            // Si la imagen excede el tamaño máximo, mostrar un SweetAlert2 indicando el tamaño máximo permitido
+            swal({
+                title: "Tamaño excedido",
+                text: "El tamaño máximo de la foto es de 2 MB",
+                type: "error",
+                confirmButtonText: "Aceptar",
+            });
+            // Limpiar el campo de carga de la imagen (opcional)
+            $(this).val("");
+            return;
+        }
+
+        // Si pasa las validaciones, aquí puedes continuar con otras acciones, como cargar la imagen, etc.
+        // Por ejemplo, podrías mostrar previamente la imagen en una vista previa antes de cargarla al servidor
+        // Mostrar la imagen seleccionada en la vista previa
+
+        let reader = new FileReader();
+        reader.onload = function (e) {
+            $(".previsualizar").attr("src", e.target.result).show();
+        };
+        reader.readAsDataURL(file);
     });
 
     $("#form-new").submit(function (event) {

@@ -73,6 +73,15 @@ $(function () {
         ],
     });
 
+    function getUserFromLocalStorage() {
+        var user = localStorage.getItem("user");
+        if (user) {
+            return JSON.parse(user);
+        } else {
+            return null;
+        }
+    }
+
     $(".user-photo").change(function (e) {
         e.preventDefault();
         let file = this.files[0];
@@ -153,6 +162,7 @@ $(function () {
         isEditing = false;
         console.log("Editing >>:", isEditing);
         resetUserData();
+        $('input[name="password"]').prop("required", true);
         renderModal(
             "Agregar Usuario",
             "#3c8dbc",
@@ -218,6 +228,7 @@ $(function () {
                 }).then((r) => {
                     if (r.value) {
                         table.ajax.reload();
+                        $("#modalAgregarUsuario").modal("hide"); // Cerrar el modal
                         resetModal();
                     }
                 });
@@ -259,11 +270,12 @@ $(function () {
 
         // Obtener los datos del formulario, incluyendo archivos
         const formData = new FormData($("#form-new")[0]);
+        let user = getUserFromLocalStorage();
 
         // Realizar la solicitud POST usando jQuery
         $.ajax({
             type: "PUT",
-            url: base_url + "api/users", // Reemplaza con tu endpoint correcto
+            url: base_url + "api/users/" + user.id, // Reemplaza con tu endpoint correcto
             data: formData,
             contentType: false, // Importante: desactivar la configuración predeterminada de contentType (para archivos)
             processData: false, // Importante: desactivar la configuración predeterminada de processData (para archivos)
@@ -275,6 +287,7 @@ $(function () {
                 }).then((r) => {
                     if (r.value) {
                         table.ajax.reload();
+                        $("#modalAgregarUsuario").modal("hide"); // Cerrar el modal
                         resetModal();
                     }
                 });
@@ -378,6 +391,7 @@ $(function () {
             confirmButtonText: "Sí, editar",
         }).then((result) => {
             if (result.value) {
+                $('input[name="password"]').removeAttr("required");
                 show(itemId);
             }
         });

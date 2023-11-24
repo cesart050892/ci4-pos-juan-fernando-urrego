@@ -166,7 +166,7 @@ class Users extends ResourceController
     {
         // Define la regla de validación para el campo "nombre_completo".
         $validationRules = [
-            'name' => "required|is_unique[clientes.nombre_completo,id,$id]",
+            'usuario' => "required|is_unique[users.usuario,id,$id]",
         ];
 
         // Valida la entrada del usuario.

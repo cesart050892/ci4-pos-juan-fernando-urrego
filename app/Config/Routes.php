@@ -41,11 +41,13 @@ $routes->group('', ['filter' => 'auth'], function ($routes) {
     $routes->get('create-sale', 'Sale::new');
 });
 
-$routes->group('api', function ($routes) {
+$routes->group('api', ['namespace' => 'App\Controllers\Api'], function ($routes) {
     $routes->group('auth', ['namespace' => 'App\Controllers\Api'], function ($routes) {
         $routes->post("login", 'Auth::index', ['filter' => 'no-auth']);
         $routes->get("logout", 'Auth::logout', ['filter' => 'auth']);
     });
+
+    $routes->resource('users', ['filter' => 'auth']);
 });
 
 

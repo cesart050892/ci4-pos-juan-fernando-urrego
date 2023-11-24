@@ -35,6 +35,8 @@ class Users extends Migration
             'correo'       => [
                 'type'       => 'VARCHAR',
                 'constraint' => 255,
+                'null' => true,
+                'default'  => null
             ],
             'password'       => [
                 'type'       => 'VARCHAR',
@@ -65,7 +67,6 @@ class Users extends Migration
 
         // Unique Keys
         // $this->forge->addUniqueKey('');
-        $this->forge->addUniqueKey('correo');
         // $this->forge->addUniqueKey(['key1', 'key2']);
 
         // Foreign Keys 
